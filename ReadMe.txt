@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 
-This is the Readme for the "Commander Keen Galaxy Text Editor"
+This is the Readme for the "Commander Keen Galaxy Text Editor" v. 1.1
 
 Written by John314
 
@@ -86,13 +86,18 @@ Options
          Changes the picture when in sticker mode.
 
  ENTER -> Closes the typing feild when in the loading / saving menu
-          Otherwise, adds a new line break when editing text
+          Otherwise, adds a new line break when editing text.
+
+ DELETE -> Deletes the character in front of the selector or deletes all
+           selected text.
+
+ BACKSPACE -> Removes a character from behind the selector.
 
  TAB   -> Toggles graphical animations.
 
- HOME  -> Sends the text cursor to the start of the text feild
+ HOME  -> Sends the text cursor to the start of the text feild.
 
- END   -> Sends the text cursor to the end of the text feild
+ END   -> Sends the text cursor to the end of the text feild.
 
  +     -> Increases the animation time of animated stickers.
 
@@ -124,6 +129,8 @@ Options
  When in the text editor, press ESC to leave.
 
  You can select text by holding shift and moving the cursor around.
+ You can select all the text by pressing CTRL + A
+
  You can then copy the text selected to the clipboard by pressing CTRL + C
 
  You can paste text from your clipboard by pressing CTRL + P 
@@ -163,17 +170,16 @@ Options
  Stickers
 ===========================
 
- -- Please note that version 1.0 of this program places graphics from front to back order.
-    So if you have a picture, and you put another on top (in the editor), it will be placed
-    behind that first picture.
-
-    I plan on changing this if enough people hate this querk.
-
+ ** New in version 1.1 **
+   Graphics are now placed from back to front, so if you place an image on top of another, 
+    it will be placed on top of that image.
 
  Stickers (Also known as graphics), are placed by clicking the left mouse button.
 
  Animated stickers have a little number next to the image, telling you how long it will
  take before the image is show when animated.
+ 
+ Use the + and - keys to change the time.
 
 ===========================
  Bugs
