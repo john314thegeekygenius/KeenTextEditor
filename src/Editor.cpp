@@ -1,10 +1,13 @@
 ///////////////////////////////////////////////////////////////
 ///
 ///         Commander Keen Galaxy Text Editor
-///                     V.1.0
+///                     V.1.1
 ///
 ///              Written By: John314
 ///                 on Aug 20, 2021
+///
+///                   Updated on 
+///                 on Aug 27, 2021
 ///
 /////////////////////////////////////////////////////////////////
 ///
@@ -171,22 +174,23 @@ int WriteParseString(){
 		//
 		// make sure we are starting layout text (^P first command)
 		//
-		while (data[ch] <= 32){
-			ch++;
-		}
+		//while (data[ch] <= 32){
+		//	ch++;
+		//}
 
-		if (data[ch] != '^' && toupper(data[++ch]) != 'P'){
-			std::cout << "Text not headed with ^P" << std::endl;
-			return -1;
-		}
+		//if (data[ch] != '^' && toupper(data[++ch]) != 'P'){
+		//	std::cout << "Text not headed with ^P" << std::endl;
+		//	return -1;
+		//}
 
 		while (data[ch++] != '\n');
 
 		do
 		{
 			if(ch >= (int)data.length()){
-				std::cout << "Read too many chars!" << std::endl;
-				return -1;
+				return 0;
+//				std::cout << "Read too many chars!" << std::endl;
+//				return -1;
 			}
 			// Process commands
 			if(data[ch]=='^'){
@@ -397,37 +401,43 @@ std::string EditTextStr = "";
 
 void CopyPageText(){
 	int i = 0;
+	// Changed the way pages are written in v.1.1
 	// make sure we are starting layout text (^P first command)
-	while (Keen_Pages[KeenPageOn][i++] <= 32);
-	while (Keen_Pages[KeenPageOn][i++] != '\n');
+//	while (Keen_Pages[KeenPageOn][i++] <= 32);
+//	while (Keen_Pages[KeenPageOn][i++] != '\n');
 	EditTextStr = "";
 	while(i < Keen_Pages[KeenPageOn].length()){
 		EditTextStr += Keen_Pages[KeenPageOn][i++];
 	}
-	EditTextStr.pop_back();
-	EditTextStr.pop_back();
-	EditTextStr.pop_back(); // Remove the ^P					
+//	EditTextStr.pop_back();
+//	EditTextStr.pop_back();
+//	EditTextStr.pop_back(); // Remove the ^P					
 };
 
 void CopyEditText(){
-	Keen_Pages[KeenPageOn] = "^P\n"; // Start with page identifyer
+	// Changed the way pages are written in v.1.1
+/*	Keen_Pages[KeenPageOn] = "^P\n"; // Start with page identifyer
 	Keen_Pages[KeenPageOn] += EditTextStr;
 	if(KeenPageOn==Keen_Pages.size()-1)
 		Keen_Pages[KeenPageOn] += "\n^E\n"; // End it.
 	else
 		Keen_Pages[KeenPageOn] += "\n^P\n"; // End it.
+	*/
+	Keen_Pages[KeenPageOn] = EditTextStr;
 	EditTextStr = "";
 };
 
 void AddNewPage(){
+	// Changed the way pages are written in v.1.1
+	/*
 	if(Keen_Pages.size()){
 		Keen_Pages.back().pop_back();
 		Keen_Pages.back().pop_back();
 		Keen_Pages.back().pop_back();
 		Keen_Pages.back() += "^P\n"; // Replace the ^E with ^P ???
-	}
+	}*/
 	Keen_Pages.push_back("^P\nNothing Here Yet!\n");
-	Keen_Pages.back() += "^E\n";
+//	Keen_Pages.back() += "^E\n";
 };
 
 bool TerminalShow = false;
@@ -438,10 +448,11 @@ void RemovePage(){
 		VectorPop(Keen_Pages,KeenPageOn);
 		if(Keen_Pages.size()&&KeenPageOn>=Keen_Pages.size()-1){
 			// Remove any old ^P???
-			Keen_Pages.back().pop_back();
-			Keen_Pages.back().pop_back();
-			Keen_Pages.back().pop_back();
-			Keen_Pages.back() += "^E\n";
+	// Changed the way pages are written in v.1.1
+//			Keen_Pages.back().pop_back();
+//			Keen_Pages.back().pop_back();
+//			Keen_Pages.back().pop_back();
+//			Keen_Pages.back() += "^E\n";
 			KeenPageOn = Keen_Pages.size()-1;
 		}
 	}else{
@@ -454,9 +465,15 @@ void RemovePage(){
 
 void PlopSticker(int x,int y,int id){
 	int i = 0; 
-	// make sure we are starting layout text (^P first command)
-	while (Keen_Pages[KeenPageOn][i++] <= 32);
-	while (Keen_Pages[KeenPageOn][i++] != '\n');
+
+	while (Keen_Pages[KeenPageOn][i++] == '\n'); i++; // Skip the thingy
+	// Skip to the end of the graphics
+	while(Keen_Pages[KeenPageOn][i] == '^'){
+		while (Keen_Pages[KeenPageOn][i] != '\n'){
+			i++;
+		}
+		i++; // Skip to end?
+	}
 	std::string GfxStr = ""; 
 	if(TimerSticker){
 		GfxStr = "^T";

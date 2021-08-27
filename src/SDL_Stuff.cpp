@@ -1,10 +1,13 @@
 ///////////////////////////////////////////////////////////////
 ///
 ///         Commander Keen Galaxy Text Editor
-///                     V.1.0
+///                     V.1.1
 ///
 ///              Written By: John314
 ///                 on Aug 20, 2021
+///
+///                   Updated on 
+///                 on Aug 27, 2021
 ///
 /////////////////////////////////////////////////////////////////
 ///
@@ -344,6 +347,8 @@ void AppendString2(std::string &orgin,std::string append,int offset){
 };
 
 void StringPop(std::string &s, int id){
+	if(id < 0 || id >= s.length())
+		return;
 	s.erase (s.begin() + id);
 };
 
@@ -379,10 +384,21 @@ void UpdateSDL(){
 	                    //TypeFeildString.pop_back();
 	                }
 	                // Handle Delete
-	                else if( Keen_Events.key.keysym.sym == SDLK_DELETE && TypeFeildString.length() > 0 && TypeFeildLocator < TypeFeildString.length()-1)
+	                else if( Keen_Events.key.keysym.sym == SDLK_DELETE && TypeFeildString.length() > 0 )
 	                {
-	                    //lop off character
-	                    StringPop(TypeFeildString,TypeFeildLocator+1);
+	                    // Delete all selected text
+	                    if(TypeFeildSelectStart!=-1){
+							int x = TypeFeildSelectStart, y = TypeFeildLocator;
+	                		if(y < x) { int t = y; y = x; x = t;} // swap
+	                		for(int txti = x; txti < y; txti++){
+			                    StringPop(TypeFeildString,x);
+	                		}
+	                    }else{
+	                    	if(TypeFeildLocator < TypeFeildString.length()-1){
+			                    //lop off character
+			                    StringPop(TypeFeildString,TypeFeildLocator+1);
+			                }
+		                }
 	                } // handle enter
 	                else if( Keen_Events.key.keysym.sym == SDLK_RETURN){
 	                	if(EditingText){
@@ -391,7 +407,11 @@ void UpdateSDL(){
 						}else{
 		                	TypeFeildEnabled = false;
 		                }
-	                } // handle Home
+	                } // handle ctrl +_A
+	                else if( Keen_Events.key.keysym.sym == SDLK_a && SDL_GetModState() & KMOD_CTRL ){
+	                	TypeFeildSelectStart = 0;
+	                	TypeFeildLocator = TypeFeildString.length()-1;
+	                }  // handle Home
 	                else if( Keen_Events.key.keysym.sym == SDLK_HOME){
 						TypeFeildLocator = -1;
 	                }// handle Home

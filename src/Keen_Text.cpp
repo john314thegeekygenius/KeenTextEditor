@@ -1,10 +1,13 @@
 ///////////////////////////////////////////////////////////////
 ///
 ///         Commander Keen Galaxy Text Editor
-///                     V.1.0
+///                     V.1.1
 ///
 ///              Written By: John314
 ///                 on Aug 20, 2021
+///
+///                   Updated on 
+///                 on Aug 27, 2021
 ///
 /////////////////////////////////////////////////////////////////
 ///
@@ -135,33 +138,33 @@ void LoadKeenText(std::string name){
 		int ch = GetChar(fp);
 		if(ch==EOF){ fclose(fp); return; }
 		if(ch=='^'){
+			// It's a command
+			ch = GetChar(fp);
+			// Changed the way pages are read in v.1.1
+			if(ch == 'P' || ch == 'E'){
+				if(ch=='E'){
+					std::cout << "Found end of file." << std::endl;
+					std::cout << "Loaded " << std::to_string(Keen_Pages.size()) << " pages!" << std::endl;
+					fclose(fp);
+					return;
+				}
+				Keen_Pages.push_back("");
+			}else {
+				if(Keen_Pages.size()){
+					Keen_Pages.back().push_back('^');
+					Keen_Pages.back().push_back(ch);
+				}
+			}
+		}else{
 			if(Keen_Pages.size()){
 				Keen_Pages.back().push_back(ch);
 			}
-			// It's a command
-			ch = GetChar(fp);
-			if(ch == 'P'){
-				if(Keen_Pages.size()){
-					Keen_Pages.back().push_back(ch);
-				}
-				Keen_Pages.push_back("^");
-			}else if(ch == 'E'){
-				std::cout << "Found end of file." << std::endl;
-				if(Keen_Pages.size()){
-					Keen_Pages.back().push_back(ch);
-				}
-				std::cout << "Loaded " << std::to_string(Keen_Pages.size()) << " pages!" << std::endl;
-				fclose(fp);
-				return;
-			}
-		}
-		if(Keen_Pages.size()){
-			Keen_Pages.back().push_back(ch);
 		}
 	}
 };
 
 void SaveKeenText(std::string name){
+	// Changed the way pages are written in v.1.1
 
 	FILE *fp;
 	fp = fopen(name.c_str(),"wb");
@@ -169,18 +172,24 @@ void SaveKeenText(std::string name){
 		std::cout << "Error opening " << name << std::endl;
 		return;
 	}
+	fputc('^',fp);
+	fputc('P',fp);
+	fputc('\n',fp);
 	for(int e = 0; e < Keen_Pages.size()-1; e++){
-		for(int i = 0; i < Keen_Pages[e].length()-3; i++)
+		for(int i = 0; i < Keen_Pages[e].length(); i++)
 			fputc(Keen_Pages[e][i],fp);
+		fputc('\n',fp);
+		fputc('^',fp);
+		fputc('P',fp);
+		fputc('\n',fp);
 	}
 	for(int i = 0; i < Keen_Pages.back().length(); i++)
 		fputc(Keen_Pages.back()[i],fp);
 	/// make sure there is always a end
-	/*
 	fputc('^',fp);
 	fputc('E',fp);
 	fputc('\n',fp);
-	*/
+
 	fclose(fp);
 
 	std::cout << "Saved to " << name << std::endl;
@@ -324,6 +333,13 @@ void WriteKeenStringSmall(std::string text,int x,int y,Uint32 col){
 
 
 void WriteKeenStringSmart(const std::string &text,int x,int y,int mx,Uint32 col){
+	if(SDL_GetTicks()%100 > 50){
+		if(TypeFeildLocator<=0){
+			// Show it a x,y
+			int locX = 7;
+			SDL_DrawPartBmpShrunk(Keen_Font2,x+locX-5,y+8,15*11,5*10,11,10);
+		}
+	}
 	if(text.length() <= 0) return;
 	SDL_Color txtcol = {
 		static_cast<Uint8>((col>>16)&0xFF),
@@ -359,10 +375,12 @@ void WriteKeenStringSmart(const std::string &text,int x,int y,int mx,Uint32 col)
 				charY += 10;
 			}
 		}
-		if(SDL_GetTicks()%100 > 50 && charcount == TypeFeildLocator){
-			int locX = 7;
-			if(ch>32){locX = (Keen_Font_Widths[ch-32]);}
-			SDL_DrawPartBmpShrunk(Keen_Font2,charX+locX-5,charY+8,15*11,5*10,11,10);
+		if(SDL_GetTicks()%100 > 50){
+			if(charcount == TypeFeildLocator){
+				int locX = 7;
+				if(ch>32){locX = (Keen_Font_Widths[ch-32]);}
+				SDL_DrawPartBmpShrunk(Keen_Font2,charX+locX-5,charY+8,15*11,5*10,11,10);
+			}
 		}
 		charcount += 1;
 		if(text[i]>=32){
@@ -373,5 +391,6 @@ void WriteKeenStringSmart(const std::string &text,int x,int y,int mx,Uint32 col)
 			charY += 10;
 		}
 	}
+
 	SDL_SetSurfaceColorMod(Keen_Font2,255,255,255);
 };
