@@ -1,5 +1,5 @@
 # KeenTextEditor
-A simple SDL program for editing Commander Keen Galaxy story text files.<br>
+A simple program for editing Commander Keen Galaxy story text files.<br>
 <br>
 Simple tool menu
 <br>
